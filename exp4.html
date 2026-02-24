@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Portal - Tech Event 2024</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; transition: background 0.3s; }
+        .hero-img { max-height: 300px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .form-container { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        #liveGreeting { color: #0d6efd; font-weight: bold; }
+        .price-badge { font-size: 1.5rem; color: #198754; font-weight: bold; }
+        #confirmationMessage { display: none; }
+    </style>
+</head>
+<body onload="initializePage()">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#" id="mainLogo">TechEvent</a>
+            <div class="navbar-nav ms-auto">
+                <span class="nav-link text-light" id="dateTime"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center mb-4">
+                <h2 class="display-6 fw-bold text-dark">Welcome <span id="liveGreeting">Guest</span>!</h2>
+                <img src="https://th.bing.com/th/id/R.839061a99fd0246e1c08fcfaf58ecaf3?rik=DUzNMgMn0z2NkA&riu=http%3a%2f%2fwww.languageinindia.com%2fjan2010%2fkarunya1.jpg&ehk=ynMX0k1pYVPNETD9N5i1aid0%2f2Dmnz8g1YFeI%2bDpQmg%3d&risl=&pid=ImgRaw&r=0" 
+                     alt="Event Banner" class="img-fluid hero-img mb-3 w-100">
+                <p class="text-muted">Register today for the Tech Event 2024 session.</p>
+            </div>
+
+            
+            <div class="col-lg-6" id="formWrapper">
+                <div class="form-container">
+                    <form id="registrationForm" onsubmit="handleRegistration(event)">
+                        <div class="mb-3">
+                            
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="userName" class="form-control" placeholder="Enter your name" onkeyup="updateGreeting()" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Ticket Type</label>
+                            <div class="card p-2 bg-light border-0">
+                                <div class="d-flex justify-content-around">
+                                    <div class="form-check">
+                                        
+                                        <input class="form-check-input ticket-type" type="radio" name="ticket" id="standard" value="50" onchange="calculateTotal()" checked>
+                                        <label class="form-check-label" for="standard">Standard ($50)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input ticket-type" type="radio" name="ticket" id="vip" value="150" onchange="calculateTotal()">
+                                        <label class="form-check-label" for="vip">VIP ($150)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Add-ons</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="lunch" value="20" onchange="calculateTotal()">
+                                <label class="form-check-label" for="lunch">Include Lunch Buffet (+$20)</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 text-center">
+                            <p class="mb-1">Total Amount Due:</p>
+                            <div class="price-badge">$<span id="totalDisplay">50</span></div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">Register Now</button>
+                        <button type="button" class="btn btn-link w-100 mt-2 text-muted" onclick="resetForm()">Clear Form</button>
+                    </form>
+                </div>
+            </div>
+
+            
+            <div class="col-lg-6" id="confirmationMessage">
+                <div class="alert alert-success text-center p-5 shadow">
+                    <h3>🎉 Registration Successful!</h3>
+                    <p id="summaryText" class="my-4"></p>
+                    <button class="btn btn-outline-success" onclick="location.reload()">New Registration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <p class="mb-0 small">&copy; 2024 Tech Event Portal | Built with DOM & Bootstrap 5</p>
+    </footer>
+
+    <script>
+        
+        function initializePage() {
+            console.log("Portal Loaded Successfully");
+            setInterval(() => {
+                const now = new Date();
+                // getElementById used here
+                document.getElementById('dateTime').innerText = now.toLocaleTimeString();
+            }, 1000);
+        }
+
+        
+        function updateGreeting() {
+            // getElementById usage
+            const nameInput = document.getElementById('userName').value;
+            const greeting = document.getElementById('liveGreeting');
+            greeting.innerText = nameInput ? nameInput : "Guest";
+        }
+
+        
+        function calculateTotal() {
+            let total = 0;
+
+            
+            const ticketOptions = document.querySelectorAll('.ticket-type');
+            ticketOptions.forEach(opt => {
+                if (opt.checked) total += parseInt(opt.value);
+            });
+
+            // querySelector for single element
+            const lunchCheck = document.querySelector('#lunch');
+            if (lunchCheck.checked) total += parseInt(lunchCheck.value);
+
+            // Update DOM content dynamically
+            document.getElementById('totalDisplay').innerText = total;
+        }
+
+        // 4. onclick: Form Reset
+        function resetForm() {
+            // getElementsByTagName usage
+            const inputs = document.getElementsByTagName('input');
+            for(let input of inputs) {
+                if(input.type === 'text') input.value = '';
+                if(input.type === 'checkbox') input.checked = false;
+            }
+            document.getElementById('standard').checked = true;
+            updateGreeting();
+            calculateTotal();
+            alert("Form has been cleared!");
+        }
+
+        // 5. onsubmit: Handle process without reload
+        function handleRegistration(event) {
+            event.preventDefault(); // Prevent page refresh
+
+            const name = document.getElementById('userName').value;
+            const finalTotal = document.getElementById('totalDisplay').innerText;
+            
+            // getElementsByClassName usage
+            const formContainer = document.getElementsByClassName('form-container')[0];
+            
+            // DOM Manipulation: Hide form, show confirmation
+            document.getElementById('formWrapper').style.display = 'none';
+            const confirmation = document.getElementById('confirmationMessage');
+            confirmation.style.display = 'block';
+
+            document.getElementById('summaryText').innerHTML = 
+                `Thank you, <strong>${name}</strong>!<br>Your total payment of <strong>$${finalTotal}</strong> has been processed.<br>A confirmation email will be sent shortly.`;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
